@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            canvas {
+                border: #000 1px solid;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="mycanvas" width="1000" height="600" ></canvas>
+        <script>
+            var canvas = document.getElementById("mycanvas");
+            var ctx = canvas.getContext("2d");
+            var zoom=canvas.width/3;
+            const cities=[{
+                name:"Subotica",//0
+                lat:46.0937611, 
+                lon:19.6040816,
+                connections:[1,3,8],
+            },
+            {
+                name:"Backa Topola",//1
+                lat:45.7979843, 
+                lon:19.5950962,
+                connections:[0,2,3,4],
+            },
+            {
+                name:"Novi Sad",//2
+                lat:45.267136, 
+                lon:19.833549,
+                connections:[5],
+            },
+            {
+                name:"Sombor",//3
+                lat:45.783, 
+                lon:19.117,
+                connections:[5],
+            },
+            {
+                name:"Vrbas",//4
+                lat:45.5714, 
+                lon:19.6408,
+                connections:[5],
+            },
+            {
+                name:"Backa Palanka",//5
+                lat:45.2508, 
+                lon:19.3919,
+                connections:[2],
+            },
+            {
+                name:"Ruma",//6
+                lat:45.0081, 
+                lon:19.8222,
+                connections:[2,7],
+            },
+            {
+                name:"Sremska Mitrovica",//7
+                lat:44.9772179, 
+                lon:19.5601173,
+                connections:[6,5],
+            },
+            {
+                name:"Kanjiza",//8
+                lat:46.0466667, 
+                lon:19.9736628,
+                connections:[],
+            },
+            ];
+            function calc(value,f=true)
+            {
+                let tmp=canvas.width/5;
+                if(f==true) return  ((value-19)*zoom)+tmp;
+                else return (canvas.height-((value-45)*zoom))-70;
+            }
+            function write_location(name,_x,_y){
+                ctx.font = "15px Arial";
+                ctx.fillStyle="black"
+                ctx.textAlign = "center";
+                y=calc(_x,false);
+                x=calc(_y,true);
+                //console.log(x+","+y);
+                ctx.fillText(name, x, y);
+                ctx.font = "20px Arial";
+                ctx.fillStyle="red"
+                ctx.fillText("o", x+45, y+15);
+            }
+            function draw_lines(_x1,_y1,_x2,_y2){
+                y1=calc(_x1,false);
+                x1=calc(_y1,true);
+                y2=calc(_x2,false)
+                x2=calc(_y2,true);
+                ctx.beginPath();
+                ctx.moveTo(x1+48,y1+13);
+                ctx.lineTo(x2+48,y2+13);
+                ctx.stroke();
+            }
+            function canvas_size()
+            {
+                ctx.font = "15px Arial";
+                ctx.fillStyle="silver"
+                ctx.textAlign = "start";
+                ctx.fillText("canvas size:"+canvas.width+","+canvas.height+" Zoom: "+zoom, canvas.width-300, canvas.height-10);
+            }
+
+            function draw()
+            {
+                canvas_size();
+             cities.forEach(element => {
+                 write_location(element.name,element.lat,element.lon)
+                 element.connections.forEach(element2=>{
+                    draw_lines(element.lat,element.lon,cities[element2].lat,cities[element2].lon);
+                 });
+             });
+
+            }
+            draw();
+            window.addEventListener("keydown",(e)=>{
+                if(e.key=="+") zoom++;
+                else if(e.key=="-") zoom--;
+                else {}
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                draw();
+            })
+        </script>
+    </body>
+
+</html>
